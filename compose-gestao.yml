@@ -1,0 +1,41 @@
+services:
+  micro-gestao:
+    build: .
+    image: taohans/gestaocerta:micro-gestao
+    container_name: micro-gestao
+    environment:
+      - APP_PROFILE=dev
+      - SERVER_PORT=8084
+      - DB_HOST=postgres-db-gestao
+      - DB_PORT=5432
+      - DB_NAME=microservice_db
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - GATEWAY_URL=http://localhost:8080/gestao/
+      - RABBITMQ_HOST=rabbitmq-server
+      - RABBITMQ_USER=rabbitmq
+      - RABBITMQ_PASS=rabbitmq
+    networks:
+      - gestaocerta-private
+      - int-gestao-net
+
+  postgres-db-gestao:
+    image: postgres:15
+    container_name: postgres-db-gestao
+    environment:
+      POSTGRES_DB: microservice_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - int-gestao-net
+    volumes:
+      - postgres_data_gestao:/var/lib/postgresql/data
+
+networks:
+  gestaocerta-private:
+    external: true
+  int-gestao-net:
+
+volumes:
+  postgres_data_gestao:
+    driver: local
